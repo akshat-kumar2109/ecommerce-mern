@@ -7,30 +7,27 @@ export const registerController = async (req, res) => {
   // check if body has the required fields
   if (!name || !email || !password || !phone || !address) {
     // status code 400 means "No content"
-    res.status(400).send({
+    return res.status(400).send({
       success: false,
-      message: "Fields are missing",
+      error: "Fields are missing",
     });
-    return;
   }
 
   // validate phone number
   if (phone.length < 10 || phone.length > 10) {
-    res.status(400).send({
+    return res.status(400).send({
       success: false,
-      message: "Please enter valid phone number",
+      error: "Please enter valid phone number",
     });
-    return;
   }
 
   // validation for password length
   if (password.length < 8) {
     // status code 400 is for "bad request" - mainly for client side errors
-    res.status(400).send({
+    return res.status(400).send({
       success: false,
-      message: "Password length should be atlease 8 characters",
+      error: "Password length should be atlease 8 characters",
     });
-    return;
   }
 
   try {
@@ -38,11 +35,10 @@ export const registerController = async (req, res) => {
     const existingUser = await Users.findOne({ email });
     if (existingUser) {
       // 409 -> The request could not be completed due to a conflict with the current state of the resource.
-      res.status(409).send({
+      return res.status(409).send({
         success: false,
-        message: "User is already registered",
+        error: "User is already registered",
       });
-      return;
     }
 
     // hash password
@@ -66,10 +62,8 @@ export const registerController = async (req, res) => {
     console.log(error);
     res.status().send({
       success: false,
-      message: "Registeration failed",
+      error: "Registeration failed",
       error,
     });
   }
 };
-
-export default registerController;
